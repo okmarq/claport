@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\TodoListResource;
 use App\Models\TodoList;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -52,6 +53,8 @@ class TodoListController extends Controller
             return response(['error' => $validator->errors(), 'Vaidation Error']);
         }
 
+        $data['slug'] = Str::slug($request->task, '-');
+
         $todoList = TodoList::create($data);
 
         return response([
@@ -91,6 +94,7 @@ class TodoListController extends Controller
      */
     public function update(Request $request, TodoList $todoList)
     {
+        $request->slug = Str::slug($request->task, '-');
         $todoList->update($request->all());
 
         return response(['todolist' => new TodoListResource($todoList), 'message' => 'Success'], 200);
@@ -106,6 +110,6 @@ class TodoListController extends Controller
     {
         $todoList->delete();
 
-        return response(['message' => 'Employee deleted']);
+        return response(['message' => 'task deleted']);
     }
 }
